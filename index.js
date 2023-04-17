@@ -5,7 +5,7 @@ var app = express();
 require('dotenv').config()
 const {MongoClient, ServerApiVersion} = require("mongodb");
 const port = process.env.PORT || 3030; 
-       
+
 app.use(cors());
 app.use(express.json()) 
 const uri = process.env.URL
@@ -53,7 +53,10 @@ app.post('/Register', async (req, res) => {
     const pets = client.db("Orders").collection("Register");
      if(!await pets.findOne({"body.email":body.email})){
          let write = await pets.insertOne({body});
-          res.json({message: write.insertedId ? "Account created." : "Error ocurred account not created" })
+          if(write.acknowledged)
+              res.json({message:"Account created."});
+          else
+              res.json({message:"Error ocurred account not created"})
      }else
           res.json({message:"Account already exist !"})
 });
@@ -117,7 +120,7 @@ app.post('/ListOrders', async (req, res) => {
 
 app.post('/ListAccounts', async (req, res) => {  
     let body = req.body;
-    const pets = client.db("Orders").collection("Register").find().toArray();
+    const pets = await client.db("Orders").collection("Register").find().toArray();
       res.json({message: pets})
 });
 
