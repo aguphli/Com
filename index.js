@@ -50,19 +50,20 @@ const client = new MongoClient(uri,  {
 
 app.post('/Register', async (req, res) => {  
     let body = req.body;
-try{
-  const pets =  client.db("Orders").collection("Register");
-   if(!await pets.findOne({"body.email":body.email})){
-        let write =  (await client.db("Orders").collection("Register").insertOne({body})).acknowledged
-          if(write)
-              res.json({message:"Account created."});
-          else
-              res.json({message:"Error ocurred account not created"})
-     }else
-          res.json({message:"Account already exist !"})
-    }catch(err){
-        res.json({message: err})
-    }
+    try{
+     const pets = client.db("Orders").collection("Register");
+      if(!await pets.findOne({"body.email":body.email})){
+         client.close();
+         let write = (await client.db("Orders").collection("Register").insertOne({body})).acknowledged
+            if(write)
+                res.json({message:"Account created."});
+             else
+                res.json({message:"Error ocurred account not created"})
+        }else
+            res.json({message:"Account already exist !"})
+        }catch(err){
+            res.json({message: err})
+        }
 });
 
 
@@ -164,4 +165,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
