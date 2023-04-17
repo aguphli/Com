@@ -53,13 +53,8 @@ app.post('/Register', async (req, res) => {
     try{
      const pets = client.db("Orders").collection("Register");
       if(!await pets.findOne({"body.email":body.email})){
-          pets.insertOne({body})
-             .then((value) => {
-                if(value.acknowledged)
-                    res.json({message:"Account created."});
-                else
-                  res.json({message:"Error ocurred account not created"})
-             })
+          pets.insertOne({body});
+           res.json({message:"Account created."});
         }else
             res.json({message:"Account already exist !"})
         }catch(err){
