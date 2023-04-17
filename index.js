@@ -50,15 +50,20 @@ const client = new MongoClient(uri,  {
 
 app.post('/Register', async (req, res) => {  
     let body = req.body;
+try{
     const pets = client.db("Orders").collection("Register");
      if(!await pets.findOne({"body.email":body.email})){
          let write = await pets.insertOne({body});
-          if(write.acknowledged)
+
+          if(write.acknowledged === true)
               res.json({message:"Account created."});
           else
               res.json({message:"Error ocurred account not created"})
      }else
           res.json({message:"Account already exist !"})
+    }catch(err){
+        res.json({message: err})
+    }
 });
 
 
@@ -76,7 +81,7 @@ app.post('/Login', async (req, res) => {
         }else
             res.json({message:"Account not found !"})
   
-  });
+});
 
 
 
@@ -102,16 +107,16 @@ app.post('/PlaceOrder', async (req, res) => {
            else
               res.json({message:"Contact us order could'nt be placed !"})
   
-  });
+});
 
 
 
 
 
 app.post('/ListOrders', async (req, res) => {  
-     let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
-         res.json({message:ref})    
-  });
+ let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
+   res.json({message:ref})    
+});
 
 
 
@@ -127,29 +132,31 @@ app.post('/ListAccounts', async (req, res) => {
 
 
 
-  app.post('/EditOrders', async (req, res) => {  
+app.post('/EditOrders', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
         .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log}}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
-  });  
+});  
 
 
 
 
 
-  app.post('/Complete', async (req, res) => {  
+app.post('/Complete', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
         .updateOne({"track_id":payload.track_id},{$set:{isPending:false}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
-  });  
+});  
 
 
 
-  function Replace(url){
+
+function Replace(url){
     return url.toUpperCase().replace(/-/g, ''.trim())
 }
+
 
 
 
@@ -158,4 +165,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
