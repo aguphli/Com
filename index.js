@@ -1,10 +1,12 @@
 const express = require('express'); 
 const { v4: uuid } = require('uuid');
-const app = express();  
+var cors = require('cors');
+var app = express();
 require('dotenv').config()
 const {MongoClient, ServerApiVersion} = require("mongodb");
-const port = process.env.PORT || 3030;        
-
+const port = process.env.PORT || 3030; 
+       
+app.use(cors());
 app.use(express.json()) 
 const uri = process.env.URL
 const client = new MongoClient(uri,  {
@@ -77,7 +79,7 @@ app.post('/Login', async (req, res) => {
 
 
 
-  app.post('/PlaceOrder', async (req, res) => {  
+app.post('/PlaceOrder', async (req, res) => {  
         let payload = req.body;
         let pay = {
             track_id: Replace(uuid()),
@@ -103,7 +105,7 @@ app.post('/Login', async (req, res) => {
 
 
 
-  app.post('/ListOrders', async (req, res) => {  
+app.post('/ListOrders', async (req, res) => {  
      let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
          res.json({message:ref})    
   });
@@ -113,11 +115,12 @@ app.post('/Login', async (req, res) => {
 
 
 
-  app.post('/ListAccounts', async (req, res) => {  
+app.post('/ListAccounts', async (req, res) => {  
     let body = req.body;
     const pets = client.db("Orders").collection("Register").find().toArray();
       res.json({message: pets})
 });
+
 
 
 
@@ -127,6 +130,9 @@ app.post('/Login', async (req, res) => {
         .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log}}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
   });  
+
+
+
 
 
   app.post('/Complete', async (req, res) => {  
