@@ -53,7 +53,7 @@ app.post('/Register', async (req, res) => {
          let write = await pets.insertOne({body});
           res.json({message: write.insertedId ? "Account created." : "Error ocurred account not created" })
      }else
-          res.json({message:"Account already exits !"})
+          res.json({message:"Account already exist !"})
 });
 
 
@@ -74,11 +74,6 @@ app.post('/Login', async (req, res) => {
   });
 
 
-
-
-function Replace(url){
-    return url.toUpperCase().replace(/-/g, ''.trim())
-}
 
   app.post('/PlaceOrder', async (req, res) => {  
         let payload = req.body;
@@ -123,6 +118,19 @@ function Replace(url){
   });  
 
 
+  app.post('/Complete', async (req, res) => {  
+    let payload = req.body;
+     let ref =  await client.db("PlaceOrders").collection("Orders")
+        .updateOne({"track_id":payload.track_id},{$set:{isPending:false}}});     
+    res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
+  });  
+
+
+
+  function Replace(url){
+    return url.toUpperCase().replace(/-/g, ''.trim())
+}
+
 
 
 app.listen(port, () => {         
@@ -130,4 +138,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
