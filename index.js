@@ -51,11 +51,10 @@ const client = new MongoClient(uri,  {
 app.post('/Register', async (req, res) => {  
     let body = req.body;
 try{
-    const pets = client.db("Orders").collection("Register");
-     if(!await pets.findOne({"body.email":body.email})){
-         let write = await pets.insertOne({body});
-
-          if(write.acknowledged === true)
+  const pets =  client.db("Orders").collection("Register");
+   if(!await pets.findOne({"body.email":body.email})){
+        let write =  (await client.db("Orders").collection("Register").insertOne({body})).acknowledged
+          if(write)
               res.json({message:"Account created."});
           else
               res.json({message:"Error ocurred account not created"})
