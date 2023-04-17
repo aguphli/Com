@@ -75,6 +75,8 @@ app.post('/Login', async (req, res) => {
 
 
 
+
+
   app.post('/PlaceOrder', async (req, res) => {  
         let payload = req.body;
         let pay = {
@@ -107,6 +109,15 @@ app.post('/Login', async (req, res) => {
   });
 
 
+
+
+
+
+  app.post('/ListAccounts', async (req, res) => {  
+    let body = req.body;
+    const pets = client.db("Orders").collection("Register").find().toArray();
+      res.json({message: pets})
+});
 
 
 
