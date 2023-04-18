@@ -156,8 +156,8 @@ app.post('/Check', async (req, res) => {
     let body = req.body;
     try{
         const pets = client.db("PlaceOrders").collection("Orders");
-        let find = pets.findOne({"body.track_id":body.track_id});
-        res.json({message: find});
+        let find = await pets.findOne({"track_id":body.track_id});
+        res.json({message: find.GeoPoint});
         }catch(err){
             res.json({message: err})
         }
@@ -178,4 +178,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
