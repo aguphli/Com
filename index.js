@@ -71,7 +71,7 @@ app.post('/Login', async (req, res) => {
        const ref = await client.db("Orders").collection("Register").findOne({"body.email":req.body.email}) 
        if(ref !== null){      
               if(ref.body.password === payload.password)
-                   res.json({message:ref.body.email})
+                   res.json({message:{User:{email:ref.body.email,fullname:ref.body.fullname}}});
                else
                   res.json({message:"Password is invalid"})
         }else
@@ -89,6 +89,8 @@ app.post('/PlaceOrder', async (req, res) => {
             track_id: Replace(uuid()),
             pickUp: payload.pickUp,
             desitation: payload.desitation,
+            email:payload.email,
+            name:payload.name,
             isPending:true,
             GeoPoint:{
                  lat:0,
