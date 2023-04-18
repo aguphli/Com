@@ -151,6 +151,21 @@ app.post('/Complete', async (req, res) => {
 
 
 
+
+app.post('/Check', async (req, res) => {  
+    let body = req.body;
+    try{
+        const pets = client.db("PlaceOrders").collection("Orders");
+        let find = pets.findOne({"body.track_id":body.track_id});
+        res.json({message: find});
+        }catch(err){
+            res.json({message: err})
+        }
+});
+
+
+
+
 function Replace(url){
     return url.toUpperCase().replace(/-/g, ''.trim())
 }
@@ -163,4 +178,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
