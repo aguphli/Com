@@ -166,6 +166,20 @@ app.post('/Check', async (req, res) => {
 
 
 
+app.post('/delete', async (req, res) => {  
+    let body = req.body;
+    try{
+        const pets = client.db("PlaceOrders").collection("Orders");
+        let find = await pets.deleteOne({"track_id":body.track_id})
+        if(find.acknowledged)
+            res.json({message: "Order deleted"});
+        }catch(err){
+            res.json({message: err})
+        }
+});
+
+
+
 function Replace(url){
     return url.toUpperCase().replace(/-/g, ''.trim())
 }
