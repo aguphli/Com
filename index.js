@@ -18,34 +18,6 @@ const client = new MongoClient(uri,  {
 }
 );
 
-// var PlaceOrder = {
-//     pickUp:"",
-//     dropOff:"",
-//     note:"",
-//     email:"",
-//     track_id:"",
-//     isPending:boolean,
-//     GeoPoint:{
-//         lat:any,
-//         log:any
-//     }
-// }
-
-
-// var EditOrder = { 
-//     pickUp:string,
-//     dropOff:string,
-//     note:string, 
-//     email:string,
-//     track_id:string,
-//     isPending:boolean,
-//     GeoPoint:{
-//         lat:any,
-//         log:any
-//     }
-// }
-
-
 
 
 app.post('/Register', async (req, res) => {  
@@ -91,6 +63,7 @@ app.post('/PlaceOrder', async (req, res) => {
             desitation: payload.desitation,
             email:payload.email,
             name:payload.name,
+            currentLocation:null,
             isPending:true,
             GeoPoint:{
                  lat:0,
@@ -133,7 +106,7 @@ app.post('/ListAccounts', async (req, res) => {
 app.post('/EditOrders', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
-        .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log}}});     
+        .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log,currentLocation:payload.currentLocation}}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
 });  
 
@@ -192,4 +165,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
