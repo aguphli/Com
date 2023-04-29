@@ -63,7 +63,8 @@ app.post('/PlaceOrder', async (req, res) => {
             desitation: payload.desitation,
             email:payload.email,
             name:payload.name,
-            currentLocation:null,
+            currentLocation:"Pending",
+            date:DateHumanFormated(),
             isPending:true,
             GeoPoint:{
                  lat:0,
@@ -72,15 +73,15 @@ app.post('/PlaceOrder', async (req, res) => {
         }
         const ref = await client.db("PlaceOrders").collection("Orders").insertOne(pay);
         let refind =  await client.db("Orders").collection("Register")
-                .findOne({"email":payload.email});
-            if(refind.isDisabled !== true){
-                let isWrite = ref.insertedId
-                if(isWrite)
-                   res.json({message:pay.track_id})
-                else
-                   res.json({message:"Contact us order could'nt be placed !"})
-            }else
-                res.json({message:"Account has been disabled Pls contact Myrapidroute!"})
+                .findOne({"body.email":payload.email});
+                    if(refind.isDisabled !== true){
+                        let isWrite = ref.insertedId
+                        if(isWrite)
+                          res.json({message:pay.track_id})
+                        else
+                          res.json({message:"Contact us order could'nt be placed !"})
+                    }else
+                        res.json({message:"Account has been disabled Pls contact Myrapidroute!"})
       
   
 });
@@ -113,8 +114,8 @@ app.post('/ListOfUserOrders', async (req, res) => {
     let body = req.body;
     const pets = await client.db("PlaceOrders").collection("Orders").find().toArray();
      for(let e = 0; e < pets.length; e++){
-         if(pets[e].body.email === body.email)
-            carry.push(pets[e].body);
+         if(pets[e].email === body.email)
+            carry.push(pets[e]);
       if(e == pets.length || e == pets.length -1)
           res.json({message:carry});
      }
@@ -128,8 +129,9 @@ app.post('/ListOfUserOrders', async (req, res) => {
 app.post('/EditUser', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("Orders").collection("Register")
-        .updateOne({"email":payload.email},{$set:{isDisabled:true}});     
-    res.json({message: ref.acknowledged ? "User  account has been disabled" : "User not found."})   
+        .updateOne({"email":payload.email},{$set:{isDisabled: payload.n === 1 ? false : true}}); 
+        console.log(ref);    
+    res.json({message: ref.acknowledged ? "User account updated" : "User not found."})   
 });
 
 
@@ -201,10 +203,15 @@ function Replace(url){
 
 
 
+function DateHumanFormated(){
+ return  new Date().toISOString().split('T')[0]
+}
+
+   
 
 app.listen(port, () => {         
     console.log(`Now listening on port ${port}`); 
 });
 
 
-//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
+//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
