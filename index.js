@@ -129,9 +129,9 @@ app.post('/ListOfUserOrders', async (req, res) => {
 app.post('/EditUser', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("Orders").collection("Register")
-        .updateOne({"email":payload.email},{$set:{isDisabled: payload.n === 1 ? false : true}}); 
+        .updateOne({"body.email":payload.email},{$set:{"body.isDisabled": payload.n === 1 ? false : true}}); 
         console.log(ref);    
-    res.json({message: ref.acknowledged ? "User account updated" : "User not found."})   
+    res.json({message: ref.matchedCount !== 0 ? "User account updated" : "User not found."})   
 });
 
 
@@ -142,7 +142,7 @@ app.post('/EditUser', async (req, res) => {
 app.post('/EditOrders', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
-        .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log},currentLocation:payload.currentLocation}});     
+        .updateOne({"body.track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log},currentLocation:payload.currentLocation}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
 });  
 
@@ -155,7 +155,7 @@ app.post('/EditOrders', async (req, res) => {
 app.post('/Complete', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
-        .updateOne({"track_id":payload.track_id},{$set:{isPending:false}});     
+        .updateOne({"body.track_id":payload.track_id},{$set:{"body.isPending":false}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
 });  
 
