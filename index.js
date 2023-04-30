@@ -142,7 +142,7 @@ app.post('/EditUser', async (req, res) => {
 app.post('/EditOrders', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
-        .updateOne({"body.track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log},currentLocation:payload.currentLocation}});     
+        .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log},currentLocation:payload.currentLocation}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
 });  
 
@@ -214,4 +214,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//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
