@@ -63,7 +63,13 @@ app.post('/PlaceOrder', async (req, res) => {
             desitation: payload.desitation,
             email:payload.email,
             name:payload.name,
-            currentLocation:"Pending",
+            currentLocation:"Pending assessment.",
+            Status:"Pending assessment.",
+            Mode:"Yet to be assigned.",
+            amount:"Pending assessment.",
+            Weight:"Pending assessment.",
+            Courier:"Yet to be assigned.",
+            Parcel_id:"Yet to be assigned.",
             date:DateHumanFormated(),
             isPending:true,
             GeoPoint:{
@@ -72,16 +78,18 @@ app.post('/PlaceOrder', async (req, res) => {
             }
         }
         const ref = await client.db("PlaceOrders").collection("Orders").insertOne(pay);
-        let refind =  await client.db("Orders").collection("Register")
-                .findOne({"body.email":payload.email});
-                    if(refind.isDisabled !== true){
-                        let isWrite = ref.insertedId
-                        if(isWrite)
-                          res.json({message:pay.track_id})
-                        else
-                          res.json({message:"Contact us order could'nt be placed !"})
-                    }else
-                        res.json({message:"Account has been disabled Pls contact Myrapidroute!"})
+
+        let key2 =  client.db("Orders").collection("Register");
+        let refind = await  key2.findOne({"body.email":payload.email});
+
+            if(refind.body.isDisabled !== true){
+                  let isWrite = ref.insertedId
+                    if(isWrite)
+                         res.json({message:pay.track_id})
+                    else
+                        res.json({message:"Contact us order could'nt be placed !"})
+             }else
+                res.json({message:"Account has been disabled Pls send us a mail."})
       
   
 });
@@ -91,8 +99,14 @@ app.post('/PlaceOrder', async (req, res) => {
 
 
 app.post('/ListOrders', async (req, res) => {  
- let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
-   res.json({message:ref})    
+    let body = req.body;
+    let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
+    let key2 =  client.db("Orders").collection("Register");
+    let refind = await  key2.findOne({"body.email":body.email});
+        if(refind.body.isDisabled !== true)
+            res.json({message:ref})    
+        else
+            res.json({message:"Account has been disabled Pls send us a mail."})
 });
 
 
@@ -101,8 +115,24 @@ app.post('/ListOrders', async (req, res) => {
 
 app.post('/ListAccounts', async (req, res) => {  
     let body = req.body;
-    const pets = await client.db("Orders").collection("Register").find().toArray();
-      res.json({message: pets})
+    let usersList = [];
+    const users = await client.db("Orders").collection("Register").find().toArray();
+        for(let e = 0; e < users.length; e++){
+            let sort = {
+                fullname:users[e].body.fullname,
+                email:users[e].body.email,
+                address:users[e].body.address,
+                phoneNumber:users[e].body.phoneNumber,
+                city:users[e].body.city,
+                state:users[e].body.state,
+                isDisabled:users[e].body.isDisabled
+            }
+            usersList.push(sort) 
+            if(e === users.length || e === users.length -1)
+              res.json({message: usersList})
+        } 
+           
+    
 });
 
 
@@ -142,7 +172,10 @@ app.post('/EditUser', async (req, res) => {
 app.post('/EditOrders', async (req, res) => {  
     let payload = req.body;
      let ref =  await client.db("PlaceOrders").collection("Orders")
-        .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log},currentLocation:payload.currentLocation}});     
+        .updateOne({"track_id":payload.track_id},{$set:{GeoPoint:{lat:payload.lat,log:payload.log},
+                 Mode:payload.mode,amount:payload.amount,Courier:payload.courier,Parcel_id:payload.parcel_id,
+                  Status:payload.status,Weight:payload.weight,
+                   currentLocation:payload.currentLocation}});     
     res.json({message: ref.acknowledged ? "Order has been updated" : "Order not found."})   
 });  
 
@@ -166,15 +199,15 @@ app.post('/Complete', async (req, res) => {
 app.post('/Check', async (req, res) => {  
     let body = req.body;
     try{
-        const pets = client.db("PlaceOrders").collection("Orders");
-        let find = await pets.findOne({"track_id":body.track_id});
+        const key1 = client.db("PlaceOrders").collection("Orders");
+        let find = await key1.findOne({"track_id":body.track_id});
 
-        let refind =  await client.db("Orders").collection("Register")
-           .findOne({"email":body.email});
-            if(refind.isDisabled !== true)
-               res.json({message: find});
+        let key2 =  client.db("Orders").collection("Register");
+        let refind = await  key2.findOne({"body.email":body.email});
+            if(refind.body.isDisabled !== true)
+                 res.json({message: find});
             else
-                res.json({message:"Account has been disabled Pls contact Myrapidroute!"})
+                res.json({message:"Account has been disabled Pls contact a mail."})
         }catch(err){
             res.json({message: err})
         }
@@ -214,4 +247,4 @@ app.listen(port, () => {
 });
 
 
-//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
+//
