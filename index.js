@@ -100,14 +100,10 @@ app.post('/PlaceOrder', async (req, res) => {
 
 app.post('/ListOrders', async (req, res) => {  
     let body = req.body;
-    let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
-    let key2 =  client.db("Orders").collection("Register");
-    let refind = await  key2.findOne({"body.email":body.email});
-        if(refind.body.isDisabled !== true)
-            res.json({message:ref})    
-        else
-            res.json({message:"Account has been disabled Pls send us a mail."})
+      let ref = await client.db("PlaceOrders").collection("Orders").find().toArray();
+        res.json({message:ref})    
 });
+
 
 
 
@@ -139,16 +135,22 @@ app.post('/ListAccounts', async (req, res) => {
 
 
 
+
 app.post('/ListOfUserOrders', async (req, res) => {  
     let carry = [];
     let body = req.body;
     const pets = await client.db("PlaceOrders").collection("Orders").find().toArray();
-     for(let e = 0; e < pets.length; e++){
-         if(pets[e].email === body.email)
-            carry.push(pets[e]);
-      if(e == pets.length || e == pets.length -1)
-          res.json({message:carry});
-     }
+    let key2 =  client.db("Orders").collection("Register");
+    let refind = await  key2.findOne({"body.email":body.email});
+        if(refind.body.isDisabled !== true){
+            for(let e = 0; e < pets.length; e++){
+                if(pets[e].email === body.email)
+                    carry.push(pets[e]);
+            if(e == pets.length || e == pets.length -1)
+                res.json({message:carry});
+          }
+       }else
+          res.json({message:"Account has been disabled Pls send us a mail."})
 });
 
 
