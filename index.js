@@ -54,13 +54,16 @@ app.post('/Login', async (req, res) => {
 
 
 
-
 app.post('/PlaceOrder', async (req, res) => {  
         let payload = req.body;
         let pay = {
             track_id: Replace(uuid()),
             pickUp: payload.pickUp,
             desitation: payload.desitation,
+            senderName: payload.senderName,
+            senderAddress: payload.senderAddress,
+            recieversName: payload.recieversName,
+            recieversAddress: payload.recieversAddress,
             email:payload.email,
             name:payload.name,
             currentLocation:"Pending assessment.",
@@ -249,4 +252,4 @@ app.listen(port, () => {
 });
 
 
-//
+//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
