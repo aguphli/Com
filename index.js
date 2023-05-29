@@ -206,13 +206,17 @@ app.post('/Check', async (req, res) => {
     try{
         const key1 = client.db("PlaceOrders").collection("Orders");
         let find = await key1.findOne({"track_id":body.track_id});
-
-        let key2 =  client.db("Orders").collection("Register");
-        let refind = await  key2.findOne({"body.email":body.email});
-            if(refind.body.isDisabled !== true)
-                 res.json({message: find});
-            else
-                res.json({message:"Account has been disabled Pls contact a mail."})
+       
+        if(body.email !== null){
+            let key2 =  client.db("Orders").collection("Register");
+            let refind = await  key2.findOne({"body.email":body.email});
+                if(refind.body.isDisabled !== true)
+                    res.json({message: find});
+                else
+                    res.json({message:"Account has been disabled Pls contact a mail."})
+        }else{
+                res.json({message: find});
+        }
         }catch(err){
             res.json({message: err})
         }
@@ -251,5 +255,4 @@ app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 
 });
 
-
-//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
+//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
